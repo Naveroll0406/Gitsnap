@@ -17,6 +17,18 @@
 # # Load environment variables from .env
 # load_dotenv("/home/kshatra/Desktop/Git_Snap/.env")
 
+# # Define tools once globally
+# TOOLS = [
+#     clone_repo,
+#     detect_dependencies,
+#     create_virtualenv,
+#     ensure_pip_in_env,
+#     install_dependencies,
+#     analyze_and_install_imports,
+#     open_editor,
+#     summarize_readme,
+# ]
+
 # def run_agent_on_repo(repo_url: str) -> str:
 #     # Initialize Azure OpenAI model
 #     llm = AzureChatOpenAI(
@@ -27,59 +39,59 @@
 #         temperature=0
 #     )
 
-#     tools = [
-#         clone_repo,
-#         detect_dependencies,
-#         create_virtualenv,
-#         ensure_pip_in_env,
-#         install_dependencies,
-#         analyze_and_install_imports,
-#         open_editor,
-#         summarize_readme,
-#     ]
-
 #     examples = [
 #     {
-#         "input": "Setup this GitHub repository for development: https://github.com/das-shilpi-12/Mini-Projects-with-NumPy-Panda-matplotlib-SciPy",
-#         "steps": """Thought: I need to clone the GitHub repository.
-#                     Action: clone_repo
-#                     Action Input: https://github.com/das-shilpi-12/Mini-Projects-with-NumPy-Panda-matplotlib-SciPy
-#                     Observation: Repository cloned at downloaded_repos/Mini-Projects-with-NumPy-Panda-matplotlib-SciPy
+#         "input": "[EXAMPLE ONLY] How to setup a GitHub repo like https://github.com/example-user/sample-project for local development?",
+#         "steps": """Thought: I need to start by cloning the GitHub repository to a local directory.
+# Action: clone_repo
+# Action Input: https://github.com/example-user/sample-project
+# Observation: Repository cloned at downloaded_repos/sample-project
 
-#                     Thought: I should detect any dependency files like requirements.txt or environment.yml.
-#                     Action: detect_dependencies
-#                     Action Input: downloaded_repos/Mini-Projects-with-NumPy-Panda-matplotlib-SciPy
-#                     Observation: Found requirements.txt
+# Thought: Next, I should detect common dependency files like requirements.txt, pyproject.toml, or environment.yml.
+# Action: detect_dependencies
+# Action Input: downloaded_repos/sample-project
+# Observation: Found requirements.txt
 
-#                     Thought: I need to create a virtual environment.
-#                     Action: create_virtualenv
-#                     Action Input: Mini_Projects_env
-#                     Observation: ✅ Virtual environment created at envs/Mini_Projects_env
+# Thought: I’ll create a virtual environment to isolate dependencies.
+# Action: create_virtualenv
+# Action Input: sample_env
+# Observation: Virtual environment created at envs/sample_env
 
-#                     Thought: I will install dependencies from requirements.txt.
-#                     Action: install_dependencies
-#                     Action Input: downloaded_repos/Mini-Projects-with-NumPy-Panda-matplotlib-SciPy, envs/Mini_Projects_env, requirements.txt
-#                     Observation: requirements.txt installed successfully
+# Thought: I must ensure pip is installed in the virtual environment before installing dependencies.
+# Action: ensure_pip_in_env
+# Action Input: envs/sample_env
+# Observation: pip installed successfully at envs/sample_env/bin/pip
 
-#                     Thought: I should now analyze the Python code and README to find missing libraries.
-#                     Action: analyze_and_install_imports
-#                     Action Input: downloaded_repos/Mini-Projects-with-NumPy-Panda-matplotlib-SciPy, envs/Mini_Projects_env
-#                     Observation: Successfully installed missing packages: numpy, pandas, matplotlib, scipy
+# Thought: Now, I will install all dependencies listed in requirements.txt.
+# Action: install_dependencies
+# Action Input: downloaded_repos/sample-project, envs/sample_env, requirements.txt
+# Observation: Dependencies installed from requirements.txt
 
-#                     Thought: I will now open the project in Visual Studio Code.
-#                     Action: open_editor
-#                     Action Input: downloaded_repos/Mini-Projects-with-NumPy-Panda-matplotlib-SciPy
-#                     Observation: VS Code launched for the project.
+# Thought: I’ll analyze the code and README to detect and install any missing or implicit imports.
+# Action: analyze_and_install_imports
+# Action Input: downloaded_repos/sample-project, envs/sample_env
+# Observation: Successfully installed missing packages: numpy, pandas, matplotlib, scikitlearn
 
-#                     Thought: Finally, I should summarize the README file for a quick overview.
-#                     Action: summarize_readme
-#                     Action Input: downloaded_repos/Mini-Projects-with-NumPy-Panda-matplotlib-SciPy
-#                     Observation: README summarized: This repo contains beginner-friendly mini projects using NumPy, Pandas, Matplotlib, and SciPy.
+# Thought: It appears that one package (scikitlearn) failed because the correct name is scikit-learn. I will install the corrected package manually.
+# Action: install_dependencies
+# Action Input: {"arg": {"packages": ["scikit-learn"], "pip_path": "envs/sample_env/bin/pip"}}
+# Observation: ✅ Successfully installed: scikit-learn
 
-#                     Final Answer: Project setup is complete. Dependencies are installed, missing packages handled, project opened in VS Code, and README summarized.
-#                     """
+# Thought: I will now launch the project in Visual Studio Code for further development.
+# Action: open_editor
+# Action Input: downloaded_repos/sample-project
+# Observation: VS Code opened for the project
+
+# Thought: Lastly, I’ll summarize the README to provide a quick understanding of the project.
+# Action: summarize_readme
+# Action Input: downloaded_repos/sample-project
+# Observation: README Summary: This repo contains beginner-friendly mini projects using NumPy, Pandas, Matplotlib, and SciPy.
+
+# Final Answer: Project setup is complete. Dependencies are installed, missing packages handled (including scikit-learn), project opened in VS Code, and README summarized for context.
+# """
 #     }
 # ]
+
 
 
 #     example_prompt = PromptTemplate(
@@ -87,115 +99,142 @@
 #         template="Question: {input}\n{steps}"
 #     )
 
-#     prefix = """You are a smart DevOps assistant. The user will provide a GitHub repository URL. You can use the following tools:
-#             {tools}
+#     prefix = """You are an intelligent DevOps assistant designed to automate the setup of GitHub repositories for local development. 
+# The user will provide a GitHub URL, and your responsibility is to perform each setup step systematically and correctly.
 
-#             Available tool names: {tool_names}
-            
-#             Each tool may expect one or more arguments (comma-separated strings). Carefully format Action Inputs to match what the tool expects.
-#             For example:
-#                     - install_dependencies → "repo_path, env_path, requirements.txt"
-#                     - analyze_and_install_imports → "repo_path, env_path"
+# Below is an example that demonstrates how to reason step-by-step through a GitHub repo setup task. 
+# **This is just a demonstration** — do not reuse inputs, repo paths, or values from the example.
 
+# Instead, apply the **same structure and logic** to the new repo the user provides.
 
-#             Your job is to intelligently prepare the project for local development by following these detailed steps:
+# You can use the following tools:
+# {tools}
 
-#             1. **Clone the Repository**  
-#             - Clone the given GitHub repo to a local directory.
+# Available tool names: {tool_names}
 
-#             2. **Detect Dependency Files**  
-#             - Check for any of the following dependency files in the root directory:
-#                 - `requirements.txt`
-#                 - `environment.yml`
-#                 - `Pipfile`
-#                 - `pyproject.toml`
+# Each tool expects one or more arguments (as comma-separated strings). Format Action Inputs carefully.
+# Examples:
+#     - install_dependencies → "repo_path, pip_path, requirements.txt"
+#     - analyze_and_install_imports → "repo_path, pip_path"
 
-#             3. **Create a Virtual Environment**  
-#             - Set up a new virtual environment using `venv` or an appropriate tool.
-#             4. Install pip using the ensure_pip_in_env tool in the environment created in step 3. and make sure no error occurs.
+# Your task is to intelligently prepare the project for local development by following these steps in order:
 
-#             5. **Install Dependencies**  
-#             - Install the dependencies using the pip only ok. 
-#             - If any of the above files are found, install the listed dependencies accordingly:
-#                 - Use `pip install -r requirements.txt` for requirements.txt
-#                 - Use `conda env create -f environment.yml` for environment.yml
-#                 - Use `pipenv install` for Pipfile
-#                 - Use `pip install .` or a build backend for pyproject.toml
+# ---
 
-#             6. **Analyze Source Code for Additional Imports**  
-#             - Scan all Python files (`.py`) and the `README.md` or `readme.md` file.
-#             - Identify commonly known libraries and modules that are typically installed via pip.
+# 1. **Clone the Repository**
+# - Use `clone_repo` to clone the GitHub repository to a local path.
+# - Store the returned path and reuse it in **all later steps** — do not guess or reconstruct the path manually.
 
-#             7. **Compare and Install Missing Packages**  
-#             - Cross-check discovered libraries with the ones already installed in the environment.
-#             - Install any missing libraries using `pip install <package>`.
+# 2. **Detect Dependency Files**
+# - Use `detect_dependencies` to look for dependency files at the repo root:
+#     - requirements.txt
+#     - environment.yml
+#     - Pipfile
+#     - pyproject.toml
 
-#             8. **Launch in VS Code**  
-#             - Open the cloned project in Visual Studio Code using the command `code .`.
+# 3. **Create a Virtual Environment**
+# - Use `create_virtualenv` to generate an isolated environment.
+# - Pass only the environment name (e.g., `my_env`) as input.
+# - Reuse the full environment path returned by this tool in all subsequent steps.
+# - ⚠️ Never guess or manually reconstruct the virtualenv path — always use the tool output.
 
-#             9. **Summarize Project Overview**  
-#             - If a `README.md` or `readme.md` file exists, read and summarize the contents clearly.
-#             - Extract project purpose, setup instructions, usage, and any prerequisites if available.
+# 4. **Ensure pip is Installed**
+# - Use `ensure_pip_in_env` immediately after creating the environment.
+# - This verifies that pip is installed and working.
 
-#             Ensure each step is done sequentially and reliably. If an error occurs in any step, explain the issue clearly and suggest how to fix it. 
+# 5. **Install Declared Dependencies**
+# - Use `install_dependencies` only if supported dependency files are found:
+#     - requirements.txt → pip install -r
+#     - environment.yml → conda env create
+#     - Pipfile → pipenv install
+#     - pyproject.toml → pip install .
 
+# 6. **Analyze for Missing Dependencies**
+# - Use `analyze_and_install_imports` to scan Python files, notebooks, and README content.
+# - It will detect and install any missing packages using pip.
 
-#             Note: Always create the virtual environment before attempting to install packages or analyze imports.
-#             If pip is missing, re-create the environment instead of calling install_dependencies for 'pip'.
+# 7. **Launch in VS Code**
+# - Use `open_editor` to open the repo folder in Visual Studio Code.
 
-#             """
+# 8. **Summarize the Project**
+# - Use `summarize_readme` to provide a concise overview of the project’s purpose, setup steps, and usage instructions.
+
+# ---
+
+# Always follow this strict sequence:
+# **Virtualenv → pip → install deps → analyze → open → summarize**
+
+# If any step fails, return the error message clearly and suggest what the user should do next.
+
+# Stay consistent, deterministic, and informative in your output.
+# """
+
 
 #     suffix = """You MUST follow this exact format for each step:
 
-#                 Thought: <your reasoning here>
-#                 Action: <name of the tool to use>
-#                 Action Input: <input for the tool>
+# Thought: <your reasoning here>
+# Action: <name of the tool to use>
+# Action Input: <input for the tool>
+# Observation: <result returned by the tool>
 
-#                 This loop can repeat until you reach:
+# Repeat this format until all steps are completed.
 
-#                 Final Answer: <your final response>
+# Final Answer: <your final response to the user>
 
-#                 Begin!
+# Constraints:
+# - Only use the tools listed above.
+# - Do not invent or use any tools that are not listed.
+# - Do not skip any step, even if it seems optional.
+# - You must reuse the exact output returned by a tool (e.g., repo path, pip path, environment path) in subsequent steps.
+# - Ensure pip is functional (via ensure_pip_in_env) before calling install_dependencies or analyze_and_install_imports.
+# - Summarize the project only at the end, never earlier.
+# - If any step fails, clearly mention the failure in Observation and suggest the next action.
 
-#                 Question: {input}
+# Begin!
 
-#                 {agent_scratchpad}"""
+# Question: {input}
+
+# {agent_scratchpad}"""
 
 
-
-    
 #     few_shot_prompt = FewShotPromptTemplate(
 #         examples=examples,
 #         example_prompt=example_prompt,
 #         prefix=prefix,
 #         suffix=suffix,  
 #         input_variables=["input", "agent_scratchpad", "tools", "tool_names"]
-
 #     )
 
-#     # Step 6: Create agent with few-shot ReAct
 #     agent = create_react_agent(
 #         llm=llm,
-#         tools=tools,
+#         tools=TOOLS,
 #         prompt=few_shot_prompt
 #     )
 
-#     # Step 7: Wrap in AgentExecutor
 #     agent_executor = AgentExecutor.from_agent_and_tools(
 #     agent=agent,
-#     tools=tools,
+#     tools=TOOLS,
 #     verbose=True,
 #     handle_parsing_errors=True,
-#      max_iterations=12  # prevent looping forever
-
+#     max_iterations=12
 #     )
+    
+#     try:
+#         result = agent_executor.invoke({
+#     "input": f"Setup this GitHub repository for development: {repo_url}",
+#     "tools": "\n".join([t.description for t in TOOLS]),
+#     "tool_names": ", ".join([t.name for t in TOOLS]),
 
-#     # Step 8: Run agent with user input
-#     result = agent_executor.invoke({
-#     "input": f"Setup this GitHub repository for development: {repo_url}"
-# })
+#     })  
+#         print("Agent Thought Process:\n", result.get("agent_scratchpad", "N/A"))
+#         print("\nFinal Output:\n", result.get("output", "No output returned."))
+
+
+#     except Exception as e:
+#         print(f"❌ Agent failed: {e}")
+
+
 #     return result
-
 
 import os
 from dotenv import load_dotenv
@@ -216,7 +255,7 @@ from tools import (
 # Load environment variables from .env
 load_dotenv("/home/kshatra/Desktop/Git_Snap/.env")
 
-# Define tools once globally
+# Define tools
 TOOLS = [
     clone_repo,
     detect_dependencies,
@@ -228,8 +267,8 @@ TOOLS = [
     summarize_readme,
 ]
 
-def run_agent_on_repo(repo_url: str) -> str:
-    # Initialize Azure OpenAI model
+def run_agent_on_repo(repo_url: str) -> dict:
+    # Initialize LLM
     llm = AzureChatOpenAI(
         azure_deployment=os.getenv("AZURE_DEPLOYMENT_NAME"),
         azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
@@ -238,140 +277,158 @@ def run_agent_on_repo(repo_url: str) -> str:
         temperature=0
     )
 
+    # Example for FewShotPrompt
     examples = [
-    {
-        "input": "[EXAMPLE ONLY] How to setup a GitHub repo like https://github.com/example-user/sample-project for local development?",
-        "steps": """Thought: I need to clone the GitHub repository.
+        {
+            "input": "[EXAMPLE ONLY] How to setup a GitHub repo like https://github.com/example-user/sample-project for local development?",
+            "steps": """Thought: I need to start by cloning the GitHub repository to a local directory.
 Action: clone_repo
 Action Input: https://github.com/example-user/sample-project
 Observation: Repository cloned at downloaded_repos/sample-project
 
-Thought: I should detect any dependency files like requirements.txt or environment.yml.
+Thought: Next, I should detect common dependency files like requirements.txt, pyproject.toml, or environment.yml.
 Action: detect_dependencies
 Action Input: downloaded_repos/sample-project
 Observation: Found requirements.txt
 
-Thought: I need to create a virtual environment.
+Thought: I’ll create a virtual environment to isolate dependencies.
 Action: create_virtualenv
 Action Input: sample_env
-Observation: ✅ Virtual environment created at envs/sample_env
+Observation: Virtual environment created at envs/sample_env
 
-Thought: I must ensure pip is available in the environment.
+Thought: I must ensure pip is installed in the virtual environment before installing dependencies.
 Action: ensure_pip_in_env
 Action Input: envs/sample_env
-Observation: ✅ pip installed successfully at: envs/sample_env/bin/pip
+Observation: pip installed successfully at envs/sample_env/bin/pip
 
-Thought: I will install dependencies from requirements.txt.
+Thought: Now, I will install all dependencies listed in requirements.txt.
 Action: install_dependencies
 Action Input: downloaded_repos/sample-project, envs/sample_env, requirements.txt
-Observation: requirements.txt installed successfully
+Observation: Dependencies installed from requirements.txt
 
-Thought: I should now analyze the Python code and README to find missing libraries.
+Thought: I’ll analyze the code and README to detect and install any missing or implicit imports.
 Action: analyze_and_install_imports
 Action Input: downloaded_repos/sample-project, envs/sample_env
-Observation: Successfully installed missing packages: numpy, pandas, matplotlib, scipy
+Observation: Successfully installed missing packages: numpy, pandas, matplotlib, scikitlearn
 
-Thought: I will now open the project in Visual Studio Code.
+Thought: It appears that one package (scikitlearn) failed because the correct name is scikit-learn. I will install the corrected package manually.
+Action: install_dependencies
+Action Input: downloaded_repos/sample-project, envs/sample_env/bin/pip, scikit-learnUpdated pipeline for your agent
+
+Automatic "analyze repo" + "send to LLM" combo
+
+
+Observation: ✅ Successfully installed: scikit-learn
+
+Thought: I will now launch the project in Visual Studio Code for further development.
 Action: open_editor
 Action Input: downloaded_repos/sample-project
-Observation: VS Code launched for the project.
+Observation: VS Code opened for the project
 
-Thought: Finally, I should summarize the README file for a quick overview.
+Thought: Lastly, I’ll summarize the README to provide a quick understanding of the project.
 Action: summarize_readme
 Action Input: downloaded_repos/sample-project
-Observation: README summarized: This repo contains beginner-friendly mini projects using NumPy, Pandas, Matplotlib, and SciPy.
+Observation: README Summary: This repo contains beginner-friendly mini projects using NumPy, Pandas, Matplotlib, and SciPy.
 
-Final Answer: Project setup is complete. Dependencies are installed, missing packages handled, project opened in VS Code, and README summarized.
+Final Answer: Project setup is complete. Dependencies are installed, missing packages handled (including scikit-learn), project opened in VS Code, and README summarized for context.
 """
-    }
-]
+        }
+    ]
 
     example_prompt = PromptTemplate(
         input_variables=["input", "steps"],
         template="Question: {input}\n{steps}"
     )
 
-    prefix = """You are an intelligent DevOps assistant designed to automate the setup of GitHub repositories for local development. The user will provide a GitHub URL,
-      and your responsibility is to perform each setup step systematically and correctly.
+    prefix = """You are an intelligent DevOps assistant designed to automate the setup of GitHub repositories for local development. 
+The user will provide a GitHub URL, and your responsibility is to perform each setup step systematically and correctly.
 
-Below is an example of how to reason step-by-step through a GitHub repo setup task. 🔍 **This is just a demonstration** to show the correct tool usage format.
+Below is an example that demonstrates how to reason step-by-step through a GitHub repo setup task. 
+**This is just a demonstration** — do not reuse inputs, repo paths, or values from the example.
 
-🧪 Do **not** reuse any inputs, repo paths, or values from the example.
-✅ Instead, apply the same structure and logic to the **new repo the user provides**.
+Instead, apply the **same structure and logic** to the new repo the user provides.
 
 You can use the following tools:
 {tools}
 
 Available tool names: {tool_names}
 
-Each tool expects one or more arguments (comma-separated strings). Format Action Inputs carefully.
+Each tool expects one or more arguments (as comma-separated strings). Format Action Inputs carefully.
 Examples:
     - install_dependencies → "repo_path, pip_path, requirements.txt"
     - analyze_and_install_imports → "repo_path, pip_path"
 
-Your job is to intelligently prepare the project for local development by following these steps:
+Your task is to intelligently prepare the project for local development by following these steps in order:
+
+---
 
 1. **Clone the Repository**
-- Use `clone_repo` to clone the GitHub repo to a local path.
-- Store the returned path and reuse it in all later steps — DO NOT guess or reconstruct the repo path.
+- Use clone_repo to clone the GitHub repository to a local path.
+- Store the returned path and reuse it in **all later steps** — do not guess or reconstruct the path manually.
 
 2. **Detect Dependency Files**
-- Use `detect_dependencies` to look for these in the root:
+- Use detect_dependencies to look for dependency files at the repo root:
     - requirements.txt
     - environment.yml
     - Pipfile
     - pyproject.toml
 
 3. **Create a Virtual Environment**
-- Use `create_virtualenv` to create a fresh isolated environment.
-- When calling this tool, pass just the environment name (e.g., `my_env`).
-- 🧠 In all following steps (like pip install or dependency analysis), **reuse the full environment path returned by `create_virtualenv`**.
-- ⚠️ Do NOT guess or reconstruct the path — always use the output directly.
-
+- Use create_virtualenv to generate an isolated environment.
+- Pass only the environment name (e.g., my_env) as input.
+- Reuse the full environment path returned by this tool in all subsequent steps.
+- ⚠️ Never guess or manually reconstruct the virtualenv path — always use the tool output.
 
 4. **Ensure pip is Installed**
-- Immediately after venv creation, call `ensure_pip_in_env` with the full environment path.
-- This ensures pip is present, functional, and upgradable.
+- Use ensure_pip_in_env immediately after creating the environment.
+- This verifies that pip is installed and working.
 
 5. **Install Declared Dependencies**
-- Use `install_dependencies` only if dependency files exist:
+- Use install_dependencies only if supported dependency files are found:
     - requirements.txt → pip install -r
     - environment.yml → conda env create
     - Pipfile → pipenv install
     - pyproject.toml → pip install .
 
-6. **Analyze Code and files for missing dependencies**
-- Use `analyze_and_install_imports` to scan `.py`, `.ipynb`, `README.md`, etc.
-- Let the tool infer and install missing packages using pip.
+6. **Analyze for Missing Dependencies**
+- Use analyze_and_install_imports to scan Python files, notebooks, and README content.
+- It will detect and install any missing packages using pip.
 
 7. **Launch in VS Code**
-- Use `open_editor` to open the repo folder in Visual Studio Code.
+- Use open_editor to open the repo folder in Visual Studio Code.
 
-8. **Summarize Project Overview**
-- Use `summarize_readme` to provide a clean summary of the project’s purpose, usage, and setup steps.
+8. **Summarize the Project**
+- Use summarize_readme to provide a concise overview of the project’s purpose, setup steps, and usage instructions.
 
- Always follow the correct sequence:
-- Virtualenv → pip → install deps → analyze code → open → summarize
+---
 
-If a step fails, return the error clearly and suggest what to do next.
+Always follow this strict sequence:
+**Virtualenv → pip → install deps → analyze → open → summarize**
+
+If any step fails, return the error message clearly and suggest what the user should do next.
+
+Stay consistent, deterministic, and informative in your output.
 """
-
 
     suffix = """You MUST follow this exact format for each step:
 
 Thought: <your reasoning here>
 Action: <name of the tool to use>
 Action Input: <input for the tool>
+Observation: <result returned by the tool>
 
-Repeat this format until you reach the end.
+Repeat this format until all steps are completed.
 
 Final Answer: <your final response to the user>
 
 Constraints:
 - Only use the tools listed above.
-- Do not invent or use tools that are not available.
-- Do not skip any step.
-- Ensure pip is functional before calling install_dependencies or analyze_and_install_imports.
+- Do not invent or use any tools that are not listed.
+- Do not skip any step, even if it seems optional.
+- You must reuse the exact output returned by a tool (e.g., repo path, pip path, environment path) in subsequent steps.
+- Ensure pip is functional (via ensure_pip_in_env) before calling install_dependencies or analyze_and_install_imports.
+- Summarize the project only at the end, never earlier.
+- If any step fails, clearly mention the failure in Observation and suggest the next action.
 
 Begin!
 
@@ -379,20 +436,23 @@ Question: {input}
 
 {agent_scratchpad}"""
 
+    # Build the full agent prompt
     few_shot_prompt = FewShotPromptTemplate(
         examples=examples,
         example_prompt=example_prompt,
         prefix=prefix,
-        suffix=suffix,  
+        suffix=suffix,
         input_variables=["input", "agent_scratchpad", "tools", "tool_names"]
     )
 
+    # Create the ReAct agent
     agent = create_react_agent(
         llm=llm,
         tools=TOOLS,
         prompt=few_shot_prompt
     )
 
+    # Agent Executor
     agent_executor = AgentExecutor.from_agent_and_tools(
         agent=agent,
         tools=TOOLS,
@@ -401,10 +461,15 @@ Question: {input}
         max_iterations=12
     )
 
-    result = agent_executor.invoke({
-        "input": f"Setup this GitHub repository for development: {repo_url}",
-        "tools": "\n".join([t.name for t in TOOLS]),
-        "tool_names": ", ".join([t.name for t in TOOLS])
-    })
-    return result
-
+    try:
+        result = agent_executor.invoke({
+            "input": f"Setup this GitHub repository for development: {repo_url}",
+            "tools": "\n".join([t.description for t in TOOLS]),
+            "tool_names": ", ".join([t.name for t in TOOLS]),
+        })
+        print("Agent Thought Process:\n", result.get("agent_scratchpad", "N/A"))
+        print("\nFinal Output:\n", result.get("output", "No output returned."))
+        return result
+    except Exception as e:
+        print(f"❌ Agent failed: {e}")
+        return {"error": str(e)}
