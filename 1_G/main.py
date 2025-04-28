@@ -38,8 +38,11 @@ if st.button("🚀 Run Setup"):
             try:
                 result = run_agent_on_repo(repo_url)
 
-                # ✅ Just show success message after setup
-                st.success("✅ Setup completed successfully!")
+                st.success("✅ Setup completed!")
+                output = result.get("output", str(result)) if isinstance(result, dict) else str(result)
+
+                st.text_area("📋 Output Log", output, height=350)
+                st.download_button("📥 Download Log", output, file_name=f"agent_output_{Path(repo_url).name}.txt")
 
             except Exception as e:
                 st.error("❌ Something went wrong during setup.")
